@@ -22,6 +22,24 @@
       "price": 21
     }
   ],
+  "images" : [
+    {
+      "src": "img/slider/pepper.jpg",
+      "alt": "pepper"
+  },
+  {
+      "src": "img/slider/food-12.jpg",
+      "alt": "food"
+  },
+  {
+      "src": "img/slider/olive-oil.jpg",
+      "alt": "oil"
+  },
+  {
+      "src": "img/slider/paprika.jpg",
+      "alt": "paprika"
+  }
+  ],
   "requests": [
     {
       "name": "dds",

@@ -200,45 +200,21 @@ const getResources = async (url) => {
 };
 
 
-getResources('http://localhost:3000/menu')
-.then(data => {
-   data.forEach(({img, altimg, title, descr, price}) => {
-        new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
-   });
-});
+// getResources('http://localhost:3000/menu')
+// .then(data => {
+//    data.forEach(({img, altimg, title, descr, price}) => {
+//         new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+//    });
+// });
 
-    // new MenuCard(
-    //     "img/tabs/vegy.jpg",
-    //     "vegy",
-    //     'Меню "Фитнес"',
-    //     'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-    //     9,
-    //     '.menu .container',
-    //     'menu__item',
-    //     'big'
-    // ).render();
+axios.get('http://localhost:3000/menu')
+    .then(response => {
+        response.data.forEach(({img, altimg, title, descr, price}) => {
+                    new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+               });
+    });
 
-    // new MenuCard(
-    //     "img/tabs/elite.jpg",
-    //     "elite",
-    //     'Меню “Премиум”',
-    //     'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-    //     11,
-    //     '.menu .container',
-    //     'menu__item'
-    // ).render();
-
-    // new MenuCard(
-    //     "img/tabs/post.jpg",
-    //     "post",
-    //     'Меню "Постное"',
-    //     'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-    //     10,
-    //     '.menu .container',
-    //     'menu__item'
-    // ).render();
-
-
+  
 // Forms
 
 const forms = document.querySelectorAll('form');
@@ -324,8 +300,120 @@ function bindPostData(form) {
     })
 }
 
-// fetch('http://localhost:3000/menu')
-// .then(data => data.json())
-// .then(data => console.log(data))
+//Slider
+
+const currentSlide = document.querySelector('#current'),
+      total = document.querySelector('#total'),
+      nextSlideArrow = document.querySelector('.offer__slider-next'),
+      previousSlideArrow = document.querySelector('.offer__slider-prev'),
+      sliderImage = document.querySelector('.offer__slide img'),
+      sliderParent = document.querySelector('.offer__slide');
+
+    
+
+// const sImages = [
+//     {
+//         src: "img/slider/pepper.jpg",
+//         alt: "pepper"
+//     },
+//     {
+//         src: 'img/slider/food-12.jpg',
+//         alt: 'food'
+//     },
+//     {
+//         src: 'img/slider/olive-oil.jpg',
+//         alt: 'oil'
+//     },
+//     {
+//         src: 'img/slider/paprika.jpg',
+//         alt: 'paprika'
+//     }
+// ]
+
+// class SliderPic {
+//     constructor(src, alt) {
+//         this.src = src;
+//         this.alt = alt;
+//     }
+
+//     render() {
+//         sliderImage.setAttribute('src', this.src)
+//         sliderImage.setAttribute('alt', this.alt)
+//     }
+// }
+
+let sliderIndex = 1;
+let maxIndex = 0;
+
+axios.get('http://localhost:3000/images')
+    .then(response => {
+        maxIndex = response.data.length;
+        total.textContent = maxIndex < 10 ? `0${maxIndex}` : maxIndex;
+    })
+
+function changeIndex() {
+    currentSlide.textContent = sliderIndex < 10 ? `0${sliderIndex}` : sliderIndex;
+}
+
+function nextSlide() {
+    if(sliderIndex < maxIndex) {
+        sliderIndex++;
+    } else {
+        sliderIndex = 1;
+    }
+    changeIndex();
+}
+
+function prevSlide() {
+    if (sliderIndex > 1) {
+        sliderIndex--;
+
+    } else {
+        sliderIndex = maxIndex;
+    }
+    changeIndex();
+}
+
+
+function changeSlide() {
+    
+
+    
+    function changeImage(src, alt) {
+        sliderImage.setAttribute('src', src);
+        sliderImage.setAttribute('alt', alt);
+    }
+
+    axios.get('http://localhost:3000/images')
+    .then(response => {
+        response.data.forEach(({src, alt}, index) => {
+            if ((sliderIndex - 1) === index) {
+                changeImage(src, alt);
+            }
+        })
+    })
+    
+}
+
+
+total.textContent = `0${maxIndex}`
+currentSlide.textContent = `0${sliderIndex}`;
+
+nextSlideArrow.addEventListener('click', () => {
+    nextSlide();
+    changeSlide();
+})
+
+previousSlideArrow.addEventListener('click', () => {
+    prevSlide();
+    changeSlide();
+})
+
+
+
+
+
+
+
 
  });
