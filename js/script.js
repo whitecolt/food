@@ -302,118 +302,156 @@ function bindPostData(form) {
 
 //Slider
 
-const currentSlide = document.querySelector('#current'),
-      total = document.querySelector('#total'),
-      nextSlideArrow = document.querySelector('.offer__slider-next'),
-      previousSlideArrow = document.querySelector('.offer__slider-prev'),
-      sliderImage = document.querySelector('.offer__slide img'),
-      sliderParent = document.querySelector('.offer__slide');
+const slides = document.querySelectorAll('.offer__slide'),
+    slider = document.querySelector('.offer__slider'),
+    prev = document.querySelector('.offer__slider-prev'),
+    next = document.querySelector('.offer__slider-next'),
+    total = document.querySelector('#total'),
+    current = document.querySelector('#current'),
+    slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+    width = window.getComputedStyle(slidesWrapper).width,
+    slidesField = document.querySelector('.offer__slider-inner');
 
     
 
-// const sImages = [
-//     {
-//         src: "img/slider/pepper.jpg",
-//         alt: "pepper"
-//     },
-//     {
-//         src: 'img/slider/food-12.jpg',
-//         alt: 'food'
-//     },
-//     {
-//         src: 'img/slider/olive-oil.jpg',
-//         alt: 'oil'
-//     },
-//     {
-//         src: 'img/slider/paprika.jpg',
-//         alt: 'paprika'
-//     }
-// ]
+let offset = 0;
+let slideIndex = 1;
 
-// class SliderPic {
-//     constructor(src, alt) {
-//         this.src = src;
-//         this.alt = alt;
-//     }
-
-//     render() {
-//         sliderImage.setAttribute('src', this.src)
-//         sliderImage.setAttribute('alt', this.alt)
-//     }
-// }
-
-let sliderIndex = 1;
-let maxIndex = 0;
-
-axios.get('http://localhost:3000/images')
-    .then(response => {
-        maxIndex = response.data.length;
-        total.textContent = maxIndex < 10 ? `0${maxIndex}` : maxIndex;
-    })
-
-function changeIndex() {
-    currentSlide.textContent = sliderIndex < 10 ? `0${sliderIndex}` : sliderIndex;
+if (slides.length < 10) {
+    total.textContent = `0${slides.length}`;
+    current.textContent =  `0${slideIndex}`;
+} else {
+    total.textContent = slides.length;
+    current.textContent =  slideIndex;
 }
 
-function nextSlide() {
-    if(sliderIndex < maxIndex) {
-        sliderIndex++;
-    } else {
-        sliderIndex = 1;
+slidesField.style.width = 100 * slides.length + '%';
+    slidesField.style.display = 'flex';
+    slidesField.style.transition = '0.5s all';
+
+    slidesWrapper.style.overflow = 'hidden';
+
+    slides.forEach(slide => {
+        slide.style.width = width;
+    });
+
+    slider.style.position = 'relative';
+
+    const indicators = document.createElement('ol'),
+          dots = [];
+
+    indicators.classList.add('carousel-indicators');
+    indicators.style.cssText = `
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 15;
+    display: flex;
+    justify-content: center;
+    margin-right: 15%;
+    margin-left: 15%;
+    list-style: none;    
+    `
+
+    slider.append(indicators);
+
+    for (let i = 0; i < slides.length; i++) {
+        const dot = document.createElement('li');
+        dot.setAttribute('data-slide-to', i + 1);
+        dot.style.cssText = `
+        box-sizing: content-box;
+        flex: 0 1 auto;
+        width: 30px;
+        height: 6px;
+        margin-right: 3px;
+        margin-left: 3px;
+        cursor: pointer;
+        background-color: #fff;
+        background-clip: padding-box;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        opacity: .5;
+        transition: opacity .6s ease;
+        `;
+
+        if (i == 0) {
+            dot.style.opacity = 1;
+        }
+        indicators.append(dot);
+        dots.push(dot);
     }
-    changeIndex();
-}
 
-function prevSlide() {
-    if (sliderIndex > 1) {
-        sliderIndex--;
+    next.addEventListener('click', () => {
+        if (offset == (+width.replace(/\D/g, '') * (slides.length - 1))) {
+            offset = 0;
+        } else {
+            offset += +width.replace(/\D/g, ''); 
+        }
 
-    } else {
-        sliderIndex = maxIndex;
-    }
-    changeIndex();
-}
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if (slideIndex == slides.length) {
+            slideIndex = 1;
+        } else {
+            slideIndex++;
+        }
+
+        if (slides.length < 10) {
+            current.textContent =  `0${slideIndex}`;
+        } else {
+            current.textContent =  slideIndex;
+        }
+
+        dots.forEach(item => item.style.opacity = '.5');
+        dots[slideIndex - 1].style.opacity = 1;
+    });
 
 
-function changeSlide() {
-    
+    prev.addEventListener('click', () => {
+        if (offset == 0) {
+            offset = +width.replace(/\D/g, '') * (slides.length - 1);
+        } else {
+            offset -= +width.replace(/\D/g, '');
+        }
 
-    
-    function changeImage(src, alt) {
-        sliderImage.setAttribute('src', src);
-        sliderImage.setAttribute('alt', alt);
-    }
+        slidesField.style.transform = `translateX(-${offset}px)`;
 
-    axios.get('http://localhost:3000/images')
-    .then(response => {
-        response.data.forEach(({src, alt}, index) => {
-            if ((sliderIndex - 1) === index) {
-                changeImage(src, alt);
+        if (slideIndex == 1) {
+            slideIndex = slides.length;
+        } else {
+            slideIndex--;
+        }
+
+        if (slides.length < 10) {
+            current.textContent =  `0${slideIndex}`;
+        } else {
+            current.textContent =  slideIndex;
+        }
+
+        dots.forEach(item => item.style.opacity = '.5');
+        dots[slideIndex - 1].atyle.opacity = 1;
+    });
+
+    dots.forEach(item => {
+        item.addEventListener('click', (e) => {
+            const slideTo = e.target.getAttribute('data-slide-to');
+            
+            slideIndex = slideTo;
+            offset = +width.replace(/\D/g, '') * (slideTo - 1);
+            slidesField.style.transform = `translateX(-${offset}px)`;
+            
+            if (slides.length < 10) {
+                current.textContent =  `0${slideIndex}`;
+            } else {
+                current.textContent =  slideIndex;
             }
+            
+            dots.forEach(item => item.style.opacity = '.5');
+            dots[slideIndex - 1].style.opacity = 1;
+
+            
         })
     })
-    
-}
-
-
-total.textContent = `0${maxIndex}`
-currentSlide.textContent = `0${sliderIndex}`;
-
-nextSlideArrow.addEventListener('click', () => {
-    nextSlide();
-    changeSlide();
-})
-
-previousSlideArrow.addEventListener('click', () => {
-    prevSlide();
-    changeSlide();
-})
-
-
-
-
-
-
-
 
  });
