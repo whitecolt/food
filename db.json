@@ -22,23 +22,23 @@
       "price": 21
     }
   ],
-  "images" : [
+  "images": [
     {
       "src": "img/slider/pepper.jpg",
       "alt": "pepper"
-  },
-  {
+    },
+    {
       "src": "img/slider/food-12.jpg",
       "alt": "food"
-  },
-  {
+    },
+    {
       "src": "img/slider/olive-oil.jpg",
       "alt": "oil"
-  },
-  {
+    },
+    {
       "src": "img/slider/paprika.jpg",
       "alt": "paprika"
-  }
+    }
   ],
   "requests": [
     {
@@ -55,6 +55,26 @@
       "name": "fff",
       "phone": "+1(323)233-4444",
       "id": 3
+    },
+    {
+      "name": "dds",
+      "phone": "+1(323)233-4444",
+      "id": 4
+    },
+    {
+      "name": "dds",
+      "phone": "+1(323)233-4444",
+      "id": 5
+    },
+    {
+      "name": "dds",
+      "phone": "+1(323)233-4444",
+      "id": 6
+    },
+    {
+      "name": "dds",
+      "phone": "+1(323)233-4444",
+      "id": 7
     }
   ]
 }
